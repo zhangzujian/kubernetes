@@ -24,6 +24,7 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
+	"os/exec"
 	"sort"
 	"strconv"
 	"strings"
@@ -1463,6 +1464,17 @@ var _ = common.SIGDescribe("Services", func() {
 		framework.ExpectNoError(err)
 		execPod := e2epod.CreateExecPodOrFail(cs, ns, "execpod", nil)
 		err = jig.CheckServiceReachability(clusterIPService, execPod)
+		if err != nil {
+			cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+			output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, clusterIPService.Spec.ClusterIP, 80)
+			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+		}
 		framework.ExpectNoError(err)
 	})
 
@@ -1502,6 +1514,17 @@ var _ = common.SIGDescribe("Services", func() {
 
 		execPod := e2epod.CreateExecPodOrFail(cs, ns, "execpod", nil)
 		err = jig.CheckServiceReachability(nodePortService, execPod)
+		if err != nil {
+			cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+			output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, clusterIPService.Spec.ClusterIP, 80)
+			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+		}
 		framework.ExpectNoError(err)
 	})
 
@@ -1544,6 +1567,17 @@ var _ = common.SIGDescribe("Services", func() {
 		}
 		execPod := e2epod.CreateExecPodOrFail(cs, ns, "execpod", nil)
 		err = jig.CheckServiceReachability(externalNameService, execPod)
+		if err != nil {
+			cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+			output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, clusterIPService.Spec.ClusterIP, 80)
+			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+		}
 		framework.ExpectNoError(err)
 	})
 
@@ -1588,6 +1622,17 @@ var _ = common.SIGDescribe("Services", func() {
 		}
 		execPod := e2epod.CreateExecPodOrFail(cs, ns, "execpod", nil)
 		err = jig.CheckServiceReachability(externalNameService, execPod)
+		if err != nil {
+			cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+			output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, clusterIPService.Spec.ClusterIP, 80)
+			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+		}
 		framework.ExpectNoError(err)
 	})
 

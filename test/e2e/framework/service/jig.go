@@ -937,22 +937,53 @@ func (j *TestJig) checkClusterIPServiceReachability(svc *v1.Service, pod *v1.Pod
 	}
 
 	for _, servicePort := range servicePorts {
-		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
-		if err != nil {
-			return err
-		}
 		err = testReachabilityOverClusterIP(clusterIP, servicePort, pod)
 		if err != nil {
 			return err
 		}
+		framework.Logf("Service reachability via cluster ip %s %s:%d succeeded", servicePort.Protocol, clusterIP, servicePort.Port)
 		if len(externalIPs) > 0 {
 			for _, externalIP := range externalIPs {
 				err = testReachabilityOverExternalIP(externalIP, servicePort, pod)
 				if err != nil {
 					return err
 				}
+				framework.Logf("Service reachability via external ip %s %s:%d succeeded", servicePort.Protocol, externalIP, servicePort.Port)
 			}
 		}
+		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
+		if err != nil {
+			svcName := fmt.Sprintf("%s.%s.svc.%s", svc.Name, svc.Namespace, framework.TestContext.ClusterDNSDomain)
+			// Service must resolve to IP
+			cmd := fmt.Sprintf("nslookup %s 172.18.0.100", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
+			cmd = fmt.Sprintf("nslookup %s 10.96.0.10", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
+			return err
+		}
+		framework.Logf("Service reachability via service name %s %s:%d succeeded", servicePort.Protocol, svc.Name, servicePort.Port)
 	}
 	return nil
 }
@@ -978,18 +1009,49 @@ func (j *TestJig) checkNodePortServiceReachability(svc *v1.Service, pod *v1.Pod)
 	}
 
 	for _, servicePort := range servicePorts {
-		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
-		if err != nil {
-			return err
-		}
 		err = testReachabilityOverClusterIP(clusterIP, servicePort, pod)
 		if err != nil {
 			return err
 		}
+		framework.Logf("Service reachability via cluster ip %s %s:%d succeeded", servicePort.Protocol, clusterIP, servicePort.Port)
 		err = testReachabilityOverNodePorts(nodes, servicePort, pod, clusterIP, j.ExternalIPs)
 		if err != nil {
 			return err
 		}
+		framework.Logf("Service reachability via node port %s %s:%d succeeded", servicePort.Protocol, clusterIP, servicePort.NodePort)
+		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
+		if err != nil {
+			svcName := fmt.Sprintf("%s.%s.svc.%s", svc.Name, svc.Namespace, framework.TestContext.ClusterDNSDomain)
+			// Service must resolve to IP
+			cmd := fmt.Sprintf("nslookup %s 172.18.0.100", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
+			cmd = fmt.Sprintf("nslookup %s 10.96.0.10", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
+			return err
+		}
+		framework.Logf("Service reachability via service name %s %s:%d succeeded", servicePort.Protocol, svc.Name, servicePort.Port)
 	}
 
 	return nil
@@ -1025,12 +1087,16 @@ func (j *TestJig) CheckServiceReachability(svc *v1.Service, pod *v1.Pod) error {
 
 	switch svcType {
 	case v1.ServiceTypeClusterIP:
+		framework.Logf("checking ClusterIP service reachability")
 		return j.checkClusterIPServiceReachability(svc, pod)
 	case v1.ServiceTypeNodePort:
+		framework.Logf("checking NodePort service reachability")
 		return j.checkNodePortServiceReachability(svc, pod)
 	case v1.ServiceTypeExternalName:
+		framework.Logf("checking ExternalName service reachability")
 		return j.checkExternalServiceReachability(svc, pod)
 	case v1.ServiceTypeLoadBalancer:
+		framework.Logf("checking LoadBalancer service reachability")
 		return j.checkClusterIPServiceReachability(svc, pod)
 	default:
 		return fmt.Errorf("unsupported service type \"%s\" to verify service reachability for \"%s\" service. This may due to diverse implementation of the service type", svcType, svc.Name)

@@ -951,6 +951,19 @@ func (j *TestJig) checkClusterIPServiceReachability(svc *v1.Service, pod *v1.Pod
 		}
 		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
 		if err != nil {
+			svcName := fmt.Sprintf("%s.%s.svc.%s", svc.Name, svc.Namespace, framework.TestContext.ClusterDNSDomain)
+			// Service must resolve to IP
+			cmd := fmt.Sprintf("nslookup %s 172.18.0.100", svcName)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				_, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				return true, nil
+			})
 			return err
 		}
 	}
@@ -988,6 +1001,19 @@ func (j *TestJig) checkNodePortServiceReachability(svc *v1.Service, pod *v1.Pod)
 		}
 		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
 		if err != nil {
+			svcName := fmt.Sprintf("%s.%s.svc.%s", svc.Name, svc.Namespace, framework.TestContext.ClusterDNSDomain)
+			// Service must resolve to IP
+			cmd := fmt.Sprintf("nslookup %s 172.18.0.100", svcName)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				_, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				return true, nil
+			})
 			return err
 		}
 	}

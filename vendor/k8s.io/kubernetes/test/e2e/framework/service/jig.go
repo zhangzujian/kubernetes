@@ -937,10 +937,6 @@ func (j *TestJig) checkClusterIPServiceReachability(svc *v1.Service, pod *v1.Pod
 	}
 
 	for _, servicePort := range servicePorts {
-		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
-		if err != nil {
-			return err
-		}
 		err = testReachabilityOverClusterIP(clusterIP, servicePort, pod)
 		if err != nil {
 			return err
@@ -952,6 +948,10 @@ func (j *TestJig) checkClusterIPServiceReachability(svc *v1.Service, pod *v1.Pod
 					return err
 				}
 			}
+		}
+		err = testReachabilityOverServiceName(svc.Name, servicePort, pod)
+		if err != nil {
+			return err
 		}
 	}
 	return nil

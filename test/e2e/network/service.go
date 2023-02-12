@@ -1484,6 +1484,11 @@ var _ = common.SIGDescribe("Services", func() {
 			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s 10.96.0.10 tcp 53", execPod.Namespace, execPod.Name)
+			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
 		}
 		framework.ExpectNoError(err)
 	})
@@ -1536,6 +1541,11 @@ var _ = common.SIGDescribe("Services", func() {
 			// framework.Logf("%s", output)
 
 			cmd = fmt.Sprintf("kubectl ko trace %s/%s 10.96.0.10 udp 53", execPod.Namespace, execPod.Name)
+			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s 10.96.0.10 tcp 53", execPod.Namespace, execPod.Name)
 			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
@@ -1597,6 +1607,11 @@ var _ = common.SIGDescribe("Services", func() {
 			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s 10.96.0.10 tcp 53", execPod.Namespace, execPod.Name)
+			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
 		}
 		framework.ExpectNoError(err)
 	})
@@ -1654,6 +1669,11 @@ var _ = common.SIGDescribe("Services", func() {
 			// framework.Logf("%s", output)
 
 			cmd = fmt.Sprintf("kubectl ko trace %s/%s 10.96.0.10 udp 53", execPod.Namespace, execPod.Name)
+			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
+			framework.ExpectNoError(err)
+			framework.Logf("%s", output)
+
+			cmd = fmt.Sprintf("kubectl ko trace %s/%s 10.96.0.10 tcp 53", execPod.Namespace, execPod.Name)
 			output, err = exec.Command("sh", "-xc", cmd).CombinedOutput()
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)

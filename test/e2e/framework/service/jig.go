@@ -968,7 +968,33 @@ func (j *TestJig) checkClusterIPServiceReachability(svc *v1.Service, pod *v1.Pod
 				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
 				return true, nil
 			})
+			cmd = fmt.Sprintf("nslookup -vc %s 172.18.0.100", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
 			cmd = fmt.Sprintf("nslookup %s 10.96.0.10", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
+			cmd = fmt.Sprintf("nslookup -vc %s 10.96.0.10", svcName)
 			framework.Logf("cmd: %q", cmd)
 			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
 				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
@@ -1036,7 +1062,33 @@ func (j *TestJig) checkNodePortServiceReachability(svc *v1.Service, pod *v1.Pod)
 				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
 				return true, nil
 			})
+			cmd = fmt.Sprintf("nslookup -vc %s 172.18.0.100", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
 			cmd = fmt.Sprintf("nslookup %s 10.96.0.10", svcName)
+			framework.Logf("cmd: %q", cmd)
+			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
+				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)
+				// NOTE(claudiub): nslookup may return 0 on Windows, even though the DNS name was not found. In this case,
+				// we can check stderr for the error.
+				if err != nil || (framework.NodeOSDistroIs("windows") && strings.Contains(stderr, fmt.Sprintf("can't find %s", svcName))) {
+					framework.Logf("ExternalName service %q failed to resolve to IP", pod.Namespace+"/"+pod.Name)
+					return false, nil
+				}
+				framework.Logf("ExternalName service %q succeeded to resolve to IP: %s", pod.Namespace+"/"+pod.Name, stdout)
+				return true, nil
+			})
+			cmd = fmt.Sprintf("nslookup -vc %s 10.96.0.10", svcName)
 			framework.Logf("cmd: %q", cmd)
 			_ = wait.PollImmediate(framework.Poll, 10*time.Second, func() (done bool, err error) {
 				stdout, stderr, err := e2epodoutput.RunHostCmdWithFullOutput(pod.Namespace, pod.Name, cmd)

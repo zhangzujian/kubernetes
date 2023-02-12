@@ -1479,8 +1479,6 @@ var _ = common.SIGDescribe("Services", func() {
 			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
-
-			time.Sleep(time.Hour)
 		}
 		framework.ExpectNoError(err)
 	})
@@ -1527,17 +1525,10 @@ var _ = common.SIGDescribe("Services", func() {
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
 
-			cmd = "kubectl ko sbctl lflow-list ovn-default"
-			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
-			framework.ExpectNoError(err)
-			framework.Logf("%s", output)
-
 			cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, nodePortService.Spec.ClusterIP, 80)
 			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
-
-			time.Sleep(time.Hour)
 		}
 		framework.ExpectNoError(err)
 	})
@@ -1587,16 +1578,10 @@ var _ = common.SIGDescribe("Services", func() {
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
 
-			cmd = "kubectl ko sbctl lflow-list ovn-default"
-			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
-			framework.ExpectNoError(err)
-			framework.Logf("%s", output)
-
 			// cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, externalNameService.Spec.ClusterIP, 80)
 			// output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
 			// framework.ExpectNoError(err)
 			// framework.Logf("%s", output)
-			// time.Sleep(time.Hour)
 		}
 		framework.ExpectNoError(err)
 	})
@@ -1648,16 +1633,10 @@ var _ = common.SIGDescribe("Services", func() {
 			framework.ExpectNoError(err)
 			framework.Logf("%s", output)
 
-			cmd = "kubectl ko sbctl lflow-list ovn-default"
-			output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
-			framework.ExpectNoError(err)
-			framework.Logf("%s", output)
-
 			// cmd = fmt.Sprintf("kubectl ko trace %s/%s %s tcp %d", execPod.Namespace, execPod.Name, externalNameService.Spec.ClusterIP, 80)
 			// output, err = exec.Command("sh", "-c", cmd).CombinedOutput()
 			// framework.ExpectNoError(err)
 			// framework.Logf("%s", output)
-			// time.Sleep(time.Hour)
 		}
 		framework.ExpectNoError(err)
 	})

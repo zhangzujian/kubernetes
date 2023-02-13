@@ -273,7 +273,7 @@ func makeCURLDialCommand(ipPort, dialCmd, protocol, targetIP string, targetPort 
 	// The current versions of curl included in CentOS and RHEL distros
 	// misinterpret square brackets around IPv6 as globbing, so use the -g
 	// argument to disable globbing to handle the IPv6 case.
-	return fmt.Sprintf("curl -g -q -s 'http://%s/dial?request=%s&protocol=%s&host=%s&port=%d&tries=1'",
+	return fmt.Sprintf("curl -g -q -s -m 5 'http://%s/dial?request=%s&protocol=%s&host=%s&port=%d&tries=1'",
 		ipPort,
 		dialCmd,
 		protocol,

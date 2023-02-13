@@ -469,6 +469,10 @@ var _ = common.SIGDescribe("[Feature:IPv6DualStack]", func() {
 			ginkgo.By(fmt.Sprintf("dialing(sctp) %v --> %v:%v (config.clusterIP)", config.TestContainerPod.Name, config.SecondaryClusterIP, e2enetwork.ClusterSCTPPort))
 			err := config.DialFromTestContainer("sctp", config.SecondaryClusterIP, e2enetwork.ClusterSCTPPort, config.MaxTries, 0, config.EndpointHostnames())
 			if err != nil {
+				cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+				output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+				framework.ExpectNoError(err)
+				framework.Logf("%s", output)
 				framework.Failf("failed dialing endpoint, %v", err)
 			}
 

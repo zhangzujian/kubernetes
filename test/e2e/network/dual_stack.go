@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -580,6 +581,10 @@ var _ = common.SIGDescribe("[Feature:IPv6DualStack]", func() {
 				framework.Failf("ginkgo.Failed to get endpoints from test container, error: %v", err)
 			}
 			if len(eps) == 0 {
+				cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+				output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+				framework.ExpectNoError(err)
+				framework.Logf("%s", output)
 				framework.Failf("Unexpected no endpoints return")
 			}
 			if len(eps) > 1 {
@@ -598,6 +603,10 @@ var _ = common.SIGDescribe("[Feature:IPv6DualStack]", func() {
 				framework.Failf("ginkgo.Failed to get endpoints from test container, error: %v", err)
 			}
 			if len(eps) == 0 {
+				cmd := "kubectl ko nbctl ls-lb-list ovn-default"
+				output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+				framework.ExpectNoError(err)
+				framework.Logf("%s", output)
 				framework.Failf("Unexpected no endpoints return")
 			}
 			if len(eps) > 1 {
